@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.webkit.WebBackForwardList;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 
 public class PageControlFragment extends Fragment {
 
@@ -25,7 +30,13 @@ public class PageControlFragment extends Fragment {
     private String url;
     private TextView urlView;
     private ImageButton searchButton;
-    private boolean isSearched = false;
+    private ImageButton backButton;
+    private ImageButton forwardButton;
+
+    private int position;
+    private ArrayList<String> urls;
+
+
 
     Handler content = new Handler(new Handler.Callback() {
         @Override
@@ -38,10 +49,13 @@ public class PageControlFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static PageControlFragment newInstance(String url) {
+    public static PageControlFragment newInstance(int position, ArrayList <String> urls) {
         PageControlFragment fragment = new PageControlFragment();
+
         Bundle args = new Bundle();
-        args.putString("url", url);
+
+        args.putInt("position", position);
+        args.putStringArrayList("urls", urls);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,26 +64,58 @@ public class PageControlFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.url = getArguments().getString("key");
+            this.urls = getArguments().getStringArrayList("urls");
+            this.position = getArguments().getInt("position");
         }
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_page_control, container, false);
+        final View view = inflater.inflate(R.layout.fragment_page_control, container, false);
         urlView = (EditText) view.findViewById(R.id._urlTextView);
         searchButton = (ImageButton) view.findViewById(R.id._searchButton);
+        backButton = (ImageButton) view.findViewById(R.id._backButton);
+        forwardButton = (ImageButton) view.findViewById(R.id._forwardButton);
+
+
+
+
+
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                url = urlView.getText().toString(); //format url here?
-                listener.buttonPressed(url);
+                url = urlView.getText().toString();
+                while (position != urls.size()-1){
+                    urls.remove(urls.size()-1);
+                }
+                urls.add(url);
+                position++;
+                listener.searchPressed(position, urls);
                 Log.i("url", "url: " + url);
-                isSearched();
+
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("back", "backPressed: true");
+                position--;
+                listener.backPressed(position, urls);
+            }
+        });
+
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("forward", "forwardPressed: true");
+                position++;
+                listener.forwardPressed(position, urls);
+
             }
         });
 
@@ -88,10 +134,6 @@ public class PageControlFragment extends Fragment {
         }
     }
 
-    public boolean isSearched(){
-        this.isSearched = true;
-        return true;
-    }
 
     public String getUrl(){
         return url;
@@ -104,6 +146,9 @@ public class PageControlFragment extends Fragment {
     }
 
     public interface WebMenuListener{
-        public void buttonPressed(String url);
+        public void searchPressed(int position, ArrayList <String> urls);
+        public void backPressed(int position, ArrayList <String> urls);
+        public void forwardPressed(int position, ArrayList <String> urls);
+
     }
 }

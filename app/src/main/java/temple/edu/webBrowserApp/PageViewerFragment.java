@@ -1,10 +1,14 @@
 package temple.edu.webBrowserApp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +20,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Stack;
 
 
 public class PageViewerFragment extends Fragment {
 
     private WebView webView;
     private String input_url;
+
+
+
 
     Handler content = new Handler(new Handler.Callback() {
         @Override
@@ -30,23 +39,17 @@ public class PageViewerFragment extends Fragment {
             return false;
         }
     });
+
     public PageViewerFragment() {
         // Required empty public constructor
     }
 
-    public static PageViewerFragment newInstance(String param1, String param2) {
-        PageViewerFragment fragment = new PageViewerFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        Log.i("pageViewer", "new create ");
 
-        }
     }
 
     @Override
@@ -54,11 +57,12 @@ public class PageViewerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_page_viewer, container, false);
-        webView = (WebView) view.findViewById(R.id._webViewer);
 
+        webView = (WebView) view.findViewById(R.id._webViewer);
+        Log.i("message", "run: message sent " + input_url);
         Thread thread = new Thread(){
             @Override
-            public void run() {
+            public void run(){
                 Message message = Message.obtain();
                 message.obj = input_url;
                 content.sendMessage(message);
@@ -66,13 +70,13 @@ public class PageViewerFragment extends Fragment {
         };
         thread.start();
 
-
-
-
         return view;
     }
 
-    public void defineUrl(String url){
-        this.input_url = url;
+
+
+    public void defineUrl(String url) {
+            this.input_url = url;
     }
+
 }
