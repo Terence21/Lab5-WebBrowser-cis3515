@@ -53,13 +53,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
     public void searchPressed(int position, ArrayList <String> urls) {
         this.urls = urls;
         this.position = position;
-        /*PageViewerFragment pvf = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag("viewer");
-        pvf.defineUrl(urls.get(position));
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pvf)
-                .attach(pvf)
-                .commit();*/
+  
         PageViewerFragment pvf = new PageViewerFragment();
         pvf.defineUrl(urls.get(position));
         FragmentManager fm = getSupportFragmentManager();
@@ -98,8 +92,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 }
 /*
 TODO:
-    1. create the back and forward buttons to handle going to a previous or next page
-    2. ** you need to implement a storage/data structure to hold the previous websites and append to the textview (url)
+    1. need to solve for limit on the forward/backward button so doesn't throw error
     3. solve for clicking links and updating the editText with the link clicked
     4. handle device orientation
     5. handle poor url

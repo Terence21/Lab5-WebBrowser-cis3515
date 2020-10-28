@@ -104,8 +104,11 @@ public class PageControlFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.i("back", "backPressed: true");
-                position--;
-                listener.backPressed(position, urls);
+                if (position > 0 ) {
+                    position--;
+                    listener.backPressed(position, urls);
+                }
+
             }
         });
 
@@ -113,8 +116,11 @@ public class PageControlFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.i("forward", "forwardPressed: true");
-                position++;
-                listener.forwardPressed(position, urls);
+                if (position < urls.size()-1 ) {
+                    position++;
+                    listener.forwardPressed(position, urls);
+                }
+
 
             }
         });
