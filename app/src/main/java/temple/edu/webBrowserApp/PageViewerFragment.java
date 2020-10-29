@@ -62,6 +62,7 @@ public class PageViewerFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_page_viewer, container, false);
 
+
         webView = (WebView) view.findViewById(R.id._webViewer);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
@@ -69,10 +70,13 @@ public class PageViewerFragment extends Fragment {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 TextView textView = getActivity().findViewById(R.id._urlTextView);
                 textView.setText(request.getUrl().toString());
+
+
                 listener.addLink(textView.getText().toString());
                 return super.shouldOverrideUrlLoading(view, request);
             }
         });
+
 
         Log.i("message", "run: message sent " + input_url);
         Thread thread = new Thread(){

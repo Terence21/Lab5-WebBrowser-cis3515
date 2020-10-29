@@ -124,7 +124,9 @@ public class PageControlFragment extends Fragment {
 
             }
         });
-        url = urlView.getText().toString();
+
+            url = urlView.getText().toString();
+
 
 
         return view;

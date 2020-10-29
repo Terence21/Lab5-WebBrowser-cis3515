@@ -1,5 +1,6 @@
 package temple.edu.webBrowserApp;
 
+import android.graphics.pdf.PdfDocument;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -29,21 +30,22 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                 if (urls == null) {
                     urls = new ArrayList<>();
                     position = -1;
-
-
-                    Fragment pageControl = PageControlFragment.newInstance(position, urls);
-                    Fragment pageView = new PageViewerFragment();
-
-                    FragmentManager fm = getSupportFragmentManager();
-                    fm.beginTransaction()
-                            .add(R.id.page_control, pageControl, "control")
-                            .addToBackStack(null)
-                            .add(R.id.page_viewer, pageView, "viewer")
-                            .addToBackStack(null)
-                            .commit();
                 }
+
+
+                Fragment pageControl = PageControlFragment.newInstance(position, urls);
+                Fragment pageView = new PageViewerFragment();
+
+                FragmentManager fm = getSupportFragmentManager();
+                fm.beginTransaction()
+                        .add(R.id.page_control, pageControl, "control")
+                        .addToBackStack(null)
+                        .add(R.id.page_viewer, pageView, "viewer")
+                        .addToBackStack(null)
+                        .commit();
             }
         }
+
 
     @Override
     public void onSaveInstanceState(Bundle outstate){
@@ -62,19 +64,24 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
             position = -1;
         }
 
-        PageControlFragment pageControl = PageControlFragment.newInstance(position, urls);
+       // PageControlFragment pageControl = PageControlFragment.newInstance(position, urls);
+        PageControlFragment pageControl = (PageControlFragment) getSupportFragmentManager().findFragmentByTag("control");
         pageControl.updateMembers(urls,position);
-        PageViewerFragment pageView = new PageViewerFragment();
+        Log.i("position", "onRestoreInstanceState: position" + position);
+        PageViewerFragment pageView = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag("viewer");
 
-        pageView.defineUrl(urls.get(position));
-        Log.i("urls", "onRestoreInstanceState: " + urls.get(position));
+        if (position >= 0) {
+            pageView.defineUrl(urls.get(position));
+            Log.i("urls", "onRestoreInstanceState: " + urls.get(position));
+        }
+
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
-                .replace(R.id.page_control,pageControl, "control")
-                .addToBackStack(null)
-                .replace(R.id.page_viewer, pageView, "viewer")
-                .addToBackStack(null)
+                .detach(pageControl)
+                .detach(pageView)
+                .attach(pageControl)
+                .attach(pageView)
                 .commit();
     }
 
@@ -122,9 +129,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
     @Override
     public void addLink(String link) {
-        /*while (position != urls.size()-1){
-            urls.remove(urls.size()-1);
-        }*/
+
         urls.add(correctURL(link));
         position++;
         PageControlFragment pvf = (PageControlFragment) getSupportFragmentManager().findFragmentByTag("control");
