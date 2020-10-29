@@ -18,28 +18,32 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
     ArrayList <String> urls;
     int position;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
 
-        if (urls == null){
-            urls = new ArrayList<>();
-            position = -1;
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+
+            if (savedInstanceState == null) {
+                Log.i("create", "onCreate: created");
+                if (urls == null) {
+                    urls = new ArrayList<>();
+                    position = -1;
+
+
+                    Fragment pageControl = PageControlFragment.newInstance(position, urls);
+                    Fragment pageView = new PageViewerFragment();
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .add(R.id.page_control, pageControl, "control")
+                            .addToBackStack(null)
+                            .add(R.id.page_viewer, pageView, "viewer")
+                            .addToBackStack(null)
+                            .commit();
+                }
+            }
         }
-
-
-        Fragment pageControl = PageControlFragment.newInstance(position, urls);
-        Fragment pageView = new PageViewerFragment();
-
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .add(R.id.page_control,pageControl, "control")
-                .addToBackStack(null)
-                .add(R.id.page_viewer, pageView, "viewer")
-                .addToBackStack(null)
-                .commit();
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outstate){
@@ -53,11 +57,22 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         super.onRestoreInstanceState(savedInstanceState);
         this.urls = savedInstanceState.getStringArrayList("urls");
         this.position = savedInstanceState.getInt("position");
-        Fragment pageControl = PageControlFragment.newInstance(position, urls);
-        Fragment pageView = new PageViewerFragment();
+        if (urls == null){
+            urls = new ArrayList<>();
+            position = -1;
+        }
+
+        PageControlFragment pageControl = PageControlFragment.newInstance(position, urls);
+        pageControl.updateMembers(urls,position);
+        PageViewerFragment pageView = new PageViewerFragment();
+
+        pageView.defineUrl(urls.get(position));
+        Log.i("urls", "onRestoreInstanceState: " + urls.get(position));
+
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.page_control,pageControl, "control")
+                .addToBackStack(null)
                 .replace(R.id.page_viewer, pageView, "viewer")
                 .addToBackStack(null)
                 .commit();
