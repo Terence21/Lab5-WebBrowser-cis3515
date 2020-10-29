@@ -81,14 +81,10 @@ public class PageControlFragment extends Fragment {
         forwardButton = (ImageButton) view.findViewById(R.id._forwardButton);
 
 
-
-
-
-
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                url = urlView.getText().toString();
+                url = BrowserActivity.correctURL(urlView.getText().toString());
                 while (position != urls.size()-1){
                     urls.remove(urls.size()-1);
                 }
@@ -96,6 +92,7 @@ public class PageControlFragment extends Fragment {
                 position++;
                 listener.searchPressed(position, urls);
                 Log.i("url", "url: " + url);
+                urlView.setText(urls.get(position));
 
             }
         });
@@ -107,7 +104,9 @@ public class PageControlFragment extends Fragment {
                 if (position > 0 ) {
                     position--;
                     listener.backPressed(position, urls);
+                    urlView.setText(urls.get(position));
                 }
+
 
             }
         });
@@ -119,13 +118,14 @@ public class PageControlFragment extends Fragment {
                 if (position < urls.size()-1 ) {
                     position++;
                     listener.forwardPressed(position, urls);
+                    urlView.setText(urls.get(position));
                 }
 
 
             }
         });
-
         url = urlView.getText().toString();
+
 
         return view;
     }
@@ -141,8 +141,9 @@ public class PageControlFragment extends Fragment {
     }
 
 
-    public String getUrl(){
-        return url;
+    public void updateMembers(ArrayList<String> urls, int postion){
+        this.urls = urls;
+        this.position = postion;
     }
 
     public boolean validateNetwork(){
@@ -155,6 +156,7 @@ public class PageControlFragment extends Fragment {
         public void searchPressed(int position, ArrayList <String> urls);
         public void backPressed(int position, ArrayList <String> urls);
         public void forwardPressed(int position, ArrayList <String> urls);
+
 
     }
 }

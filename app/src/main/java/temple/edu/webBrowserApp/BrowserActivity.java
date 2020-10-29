@@ -2,6 +2,7 @@ package temple.edu.webBrowserApp;
 
 import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -11,7 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener {
+public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener, PageViewerFragment.addLinkListener {
+
 
     ArrayList <String> urls;
     int position;
@@ -26,11 +28,12 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
             position = -1;
         }
 
+
         Fragment pageControl = PageControlFragment.newInstance(position, urls);
         Fragment pageView = new PageViewerFragment();
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
-                .add(R.id.page_control,pageControl)
+                .add(R.id.page_control,pageControl, "control")
                 .add(R.id.page_viewer, pageView, "viewer")
                 .commit();
     }
@@ -53,7 +56,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
     public void searchPressed(int position, ArrayList <String> urls) {
         this.urls = urls;
         this.position = position;
-  
+
         PageViewerFragment pvf = new PageViewerFragment();
         pvf.defineUrl(urls.get(position));
         FragmentManager fm = getSupportFragmentManager();
@@ -75,6 +78,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                 .detach(pvf)
                 .attach(pvf)
                 .commit();
+
     }
 
     @Override
@@ -89,10 +93,48 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                 .attach(pvf)
                 .commit();
     }
+
+    @Override
+    public void addLink(String link) {
+        /*while (position != urls.size()-1){
+            urls.remove(urls.size()-1);
+        }*/
+        urls.add(correctURL(link));
+        position++;
+        PageControlFragment pvf = (PageControlFragment) getSupportFragmentManager().findFragmentByTag("control");
+        pvf.updateMembers(urls, position);
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .detach(pvf)
+                .attach(pvf)
+                .commit();
+
+    }
+
+    public static String correctURL(String badURL){
+        String correctURL = "";
+        if (!badURL.startsWith("http://") && !badURL.startsWith("https://")){
+            correctURL = "https://";
+        }
+        if (!badURL.contains("www.")){
+            if (badURL.contains("https://")) {
+                badURL = badURL.replace("https://", "");
+            } else if (badURL.contains("http://")){
+                badURL = badURL.replace("http://", "");
+            }
+
+            correctURL = "https://www.";
+        }
+        correctURL += badURL;
+
+        if (!badURL.endsWith(".com")){
+            correctURL += ".com";
+        }
+        return correctURL;
+    }
 }
 /*
 TODO:
-    1. need to solve for limit on the forward/backward button so doesn't throw error
     3. solve for clicking links and updating the editText with the link clicked
     4. handle device orientation
     5. handle poor url
