@@ -31,10 +31,13 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
         Fragment pageControl = PageControlFragment.newInstance(position, urls);
         Fragment pageView = new PageViewerFragment();
+
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .add(R.id.page_control,pageControl, "control")
+                .addToBackStack(null)
                 .add(R.id.page_viewer, pageView, "viewer")
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -50,6 +53,14 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         super.onRestoreInstanceState(savedInstanceState);
         this.urls = savedInstanceState.getStringArrayList("urls");
         this.position = savedInstanceState.getInt("position");
+        Fragment pageControl = PageControlFragment.newInstance(position, urls);
+        Fragment pageView = new PageViewerFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.page_control,pageControl, "control")
+                .replace(R.id.page_viewer, pageView, "viewer")
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -133,9 +144,3 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         return correctURL;
     }
 }
-/*
-TODO:
-    3. solve for clicking links and updating the editText with the link clicked
-    4. handle device orientation
-    5. handle poor url
- */
