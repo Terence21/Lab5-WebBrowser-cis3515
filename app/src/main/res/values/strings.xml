@@ -3,5 +3,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="url">url</string>
+    <string name="BrowserActivity">BrowserActivity</string>
+    <string name="control">control</string>
+    <string name="viewer">viewer</string>
+    <string name="urls">urls</string>
+    <string name="position">position</string>
 
 </resources>

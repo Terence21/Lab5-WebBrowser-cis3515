@@ -49,13 +49,12 @@ public class PageControlFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static PageControlFragment newInstance(int position, ArrayList <String> urls) {
+    public static PageControlFragment newInstance(Context context, int position, ArrayList <String> urls) {
         PageControlFragment fragment = new PageControlFragment();
 
         Bundle args = new Bundle();
-
-        args.putInt("position", position);
-        args.putStringArrayList("urls", urls);
+        args.putInt(context.getResources().getString(R.string.position), position);
+        args.putStringArrayList(context.getResources().getString(R.string.urls), urls);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,8 +63,8 @@ public class PageControlFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.urls = getArguments().getStringArrayList("urls");
-            this.position = getArguments().getInt("position");
+            this.urls = getArguments().getStringArrayList(getResources().getString(R.string.urls));
+            this.position = getArguments().getInt(getResources().getString(R.string.position));
         }
 
     }
