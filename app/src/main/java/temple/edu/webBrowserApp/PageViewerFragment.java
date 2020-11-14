@@ -1,31 +1,15 @@
 package temple.edu.webBrowserApp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Stack;
 
 
 public class PageViewerFragment extends Fragment {
@@ -44,6 +28,7 @@ public class PageViewerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i("pageViewer", "new create ");
 
+
     }
 
     @Override
@@ -54,6 +39,7 @@ public class PageViewerFragment extends Fragment {
 
 
         webView = (WebView) view.findViewById(R.id._webViewer);
+        Log.i("webView", "onCreateView: " + webView.getTitle());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
             @Override
@@ -70,6 +56,7 @@ public class PageViewerFragment extends Fragment {
 
         return view;
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

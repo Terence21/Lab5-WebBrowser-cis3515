@@ -1,6 +1,7 @@
 package temple.edu.webBrowserApp;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,19 +14,28 @@ public class PageAdapter extends FragmentStatePagerAdapter {
 
     ArrayList<PageViewerFragment> pageViewerFragments;
 
-    public PageAdapter(FragmentManager fm){
+    public PageAdapter(FragmentManager fm, ArrayList<PageViewerFragment> pageViewerFragments){
         super(fm);
+        this.pageViewerFragments = pageViewerFragments;
+
+
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return new PageViewerFragment();
+        return pageViewerFragments.get(position);
     }
 
     @Override
     public int getCount() {
         return pageViewerFragments.size();
     }
+
+    public void addPageView(PageViewerFragment pageViewerFragment){
+        pageViewerFragments.add(pageViewerFragment);
+    }
+
+
 
 }
