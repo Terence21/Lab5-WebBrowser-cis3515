@@ -33,6 +33,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                 }
 
 
+
                 Fragment pageControl = PageControlFragment.newInstance(this, position, urls);
                 Fragment pageView = new PageViewerFragment();
 
