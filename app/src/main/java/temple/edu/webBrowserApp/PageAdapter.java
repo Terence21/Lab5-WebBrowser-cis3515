@@ -20,10 +20,7 @@ public class PageAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = new PageViewerFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return  fragment;
+        return new PageViewerFragment();
     }
 
     @Override
@@ -31,9 +28,4 @@ public class PageAdapter extends FragmentStatePagerAdapter {
         return pageViewerFragments.size();
     }
 
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return super.getPageTitle(position);
-    }
 }

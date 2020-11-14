@@ -22,14 +22,9 @@
             app:layout_constraintEnd_toEndOf="parent">
 
     </FrameLayout>
-    <FrameLayout
+    <androidx.viewpager.widget.ViewPager
             android:layout_width="412dp"
-            android:layout_height="475dp"
-            android:id="@+id/page_display"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintTop_toBottomOf="@+id/page_control">
-
-    </FrameLayout>
+            android:layout_height="479dp" android:id="@+id/page_display"
+            app:layout_constraintTop_toBottomOf="@+id/page_control" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

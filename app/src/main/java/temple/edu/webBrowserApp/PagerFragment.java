@@ -4,16 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class PagerFragment extends Fragment {
 
-    PageViewerFragment fragment;
+
     PageAdapter pageAdapter;
     ViewPager pager;
-    FragmentStatePagerAdapter fragmentStatePagerAdapter;
 
     public PagerFragment(){
 
@@ -31,18 +32,11 @@ public class PagerFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_page_control, container, false);
         pageAdapter = new PageAdapter(getChildFragmentManager());
-        //pager = view.findViewById(R.id.);
-        pager.setAdapter(pageAdapter);
-        return view;
-    }
-
-
-    public void displayFragment(Fragment fragment) {
-        try {
-            this.fragment = (PageViewerFragment) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(e.getLocalizedMessage());
+        pager = view.findViewById(R.id.page_display);
+        if (pager != null) {
+            pager.setAdapter(pageAdapter);
         }
+        return view;
     }
 
 

@@ -1,5 +1,6 @@
 package temple.edu.webBrowserApp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
     FragmentManager fm;
     PageControlFragment pageControlFragment;
     PageViewerFragment pageViewerFragment;
+    PagerFragment pagerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +37,17 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                     .commit();
         }
 
-        if ((tmpFragment = fm.findFragmentById(R.id.page_view)) instanceof PageViewerFragment){
-            pageViewerFragment = (PageViewerFragment) tmpFragment;
+        if ((tmpFragment = fm.findFragmentById(R.id.page_view)) instanceof PagerFragment){
+            // pageViewerFragment = (PageViewerFragment) tmpFragment;
+            pagerFragment = (PagerFragment) tmpFragment;
         } else{
-            pageViewerFragment = new PageViewerFragment();
-            fm.beginTransaction()
+            // pageViewerFragment = new PageViewerFragment();
+            /*fm.beginTransaction()
                     .add(R.id.page_display, pageViewerFragment)
+                    .commit();*/
+            pagerFragment = new PagerFragment();
+            fm.beginTransaction()
+                    .add(R.id.page_display, pagerFragment)
                     .commit();
         }
     }
@@ -64,19 +71,19 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
     @Override
     public void addLink(String link) {
-        pageControlFragment.updateMembers(link);
+       pageControlFragment.updateMembers(link);
 
     }
 
-    public static String correctURL(String badURL){
+    public static String correctURL(String badURL) {
         String correctURL = "";
-        if (!badURL.startsWith("http://") && !badURL.startsWith("https://")){
+        if (!badURL.startsWith("http://") && !badURL.startsWith("https://")) {
             correctURL = "https://";
         }
-        if (!badURL.contains("www.")){
+        if (!badURL.contains("www.")) {
             if (badURL.contains("https://")) {
                 badURL = badURL.replace("https://", "");
-            } else if (badURL.contains("http://")){
+            } else if (badURL.contains("http://")) {
                 badURL = badURL.replace("http://", "");
             }
 
@@ -84,7 +91,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         }
         correctURL += badURL;
 
-        if (!badURL.endsWith(".com") && !badURL.endsWith(".org") && !badURL.endsWith(".edu") && !badURL.endsWith(".gov")){
+        if (!badURL.endsWith(".com") && !badURL.endsWith(".org") && !badURL.endsWith(".edu") && !badURL.endsWith(".gov")) {
             correctURL += ".com";
         }
         return correctURL;
