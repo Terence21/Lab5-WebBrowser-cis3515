@@ -79,56 +79,43 @@ public class PageControlFragment extends Fragment {
         backButton = (ImageButton) view.findViewById(R.id._backButton);
         forwardButton = (ImageButton) view.findViewById(R.id._forwardButton);
 
-
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                url = BrowserActivity.correctURL(urlView.getText().toString());
-                while (position != urls.size()-1){
-                    urls.remove(urls.size()-1);
-                }
-                urls.add(url);
-                position++;
-                listener.searchPressed(position, urls);
-                Log.i("url", "url: " + url);
-                urlView.setText(urls.get(position));
-
+        View.OnClickListener controlOCL = (v) -> {
+            if (v.equals(searchButton)){
+                listener.searchPressed(correctURL(urlView.getText().toString()));
+            } else if (v.equals(backButton)){
+                listener.backPressed();
+            }else if (v.equals(forwardButton)){
+                listener.forwardPressed();
             }
-        });
+        };
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("back", "backPressed: true");
-                if (position > 0 ) {
-                    position--;
-                    listener.backPressed(position, urls);
-                    urlView.setText(urls.get(position));
-                }
-
-
-            }
-        });
-
-        forwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("forward", "forwardPressed: true");
-                if (position < urls.size()-1 ) {
-                    position++;
-                    listener.forwardPressed(position, urls);
-                    urlView.setText(urls.get(position));
-                }
-
-
-            }
-        });
-
-            url = urlView.getText().toString();
-
-
+        searchButton.setOnClickListener(controlOCL);
+        backButton.setOnClickListener(controlOCL);
+        forwardButton.setOnClickListener(controlOCL);
 
         return view;
+    }
+
+    public static String correctURL(String badURL){
+        String correctURL = "";
+        if (!badURL.startsWith("http://") && !badURL.startsWith("https://")){
+            correctURL = "https://";
+        }
+        if (!badURL.contains("www.")){
+            if (badURL.contains("https://")) {
+                badURL = badURL.replace("https://", "");
+            } else if (badURL.contains("http://")){
+                badURL = badURL.replace("http://", "");
+            }
+
+            correctURL = "https://www.";
+        }
+        correctURL += badURL;
+
+        if (!badURL.endsWith(".com") && !badURL.endsWith(".org") && !badURL.endsWith(".edu") && !badURL.endsWith(".gov")){
+            correctURL += ".com";
+        }
+        return correctURL;
     }
 
     @Override
@@ -142,21 +129,15 @@ public class PageControlFragment extends Fragment {
     }
 
 
-    public void updateMembers(ArrayList<String> urls, int postion){
-        this.urls = urls;
-        this.position = postion;
+    public void updateMembers(String url){
+        this.urlView.setText(url);
     }
 
-    public boolean validateNetwork(){
-        ConnectivityManager conn = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        Network networkInfo = conn.getActiveNetwork();
-        return conn.isActiveNetworkMetered(); // check that is correct
-    }
 
     public interface WebMenuListener{
-        public void searchPressed(int position, ArrayList <String> urls);
-        public void backPressed(int position, ArrayList <String> urls);
-        public void forwardPressed(int position, ArrayList <String> urls);
+        public void searchPressed(String url);
+        public void backPressed();
+        public void forwardPressed();
 
 
     }

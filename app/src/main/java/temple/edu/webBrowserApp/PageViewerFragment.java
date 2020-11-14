@@ -2,6 +2,7 @@ package temple.edu.webBrowserApp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,19 +31,8 @@ import java.util.Stack;
 public class PageViewerFragment extends Fragment {
 
     private WebView webView;
-    private String input_url;
     private addLinkListener listener;
 
-
-
-
-    Handler content = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            webView.loadUrl(input_url);
-            return false;
-        }
-    });
 
     public PageViewerFragment() {
         // Required empty public constructor
@@ -67,29 +57,25 @@ public class PageViewerFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                TextView textView = getActivity().findViewById(R.id._urlTextView);
-                textView.setText(request.getUrl().toString());
-
-
-                listener.addLink(textView.getText().toString());
-                return super.shouldOverrideUrlLoading(view, request);
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                listener.addLink(url);
             }
         });
 
+        if (savedInstanceState != null){
+            webView.restoreState(savedInstanceState);
+        }
 
-        Log.i("message", "run: message sent " + input_url);
-        Thread thread = new Thread(){
-            @Override
-            public void run(){
-                Message message = Message.obtain();
-                message.obj = input_url;
-                content.sendMessage(message);
-            }
-        };
-        thread.start();
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        webView.saveState(outState);
     }
 
     @Override
@@ -102,8 +88,16 @@ public class PageViewerFragment extends Fragment {
         }
     }
 
-    public void defineUrl(String url) {
-            this.input_url = url;
+    public void searchPressed(String url){
+        webView.loadUrl(url);
+    }
+
+    public void backPressed(){
+        webView.goBack();
+    }
+
+    public void forwardPressed(){
+        webView.goForward();
     }
 
     public interface addLinkListener{

@@ -7,137 +7,64 @@ import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
-public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener, PageViewerFragment.addLinkListener, BrowserControlFragment.TabListener {
+public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener, PageViewerFragment.addLinkListener {
 
 
-    ArrayList <String> urls;
-    ArrayList <PageViewerFragment> pageViewerFragments;
-    int position;
+    FragmentManager fm;
+    PageControlFragment pageControlFragment;
+    PageViewerFragment pageViewerFragment;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-            // handle title
+        // handle title
+        fm = getSupportFragmentManager();
 
-            if (savedInstanceState == null) {
-                if (urls == null) {
-                    urls = new ArrayList<>();
-                    position = -1;
-                }
+        Fragment tmpFragment;
 
-
-
-                Fragment pageControl = PageControlFragment.newInstance(this, position, urls);
-                Fragment pageView = new PageViewerFragment();
-
-                FragmentManager fm = getSupportFragmentManager();
-                fm.beginTransaction()
-                        .add(R.id.page_control, pageControl, getResources().getString(R.string.control))
-                        .addToBackStack(null)
-                        .add(R.id.page_display, pageView, getResources().getString(R.string.viewer))
-                        .addToBackStack(null)
-                        .commit();
-            }
+        if ((tmpFragment = fm.findFragmentById(R.id.page_control)) instanceof  PageControlFragment){
+            pageControlFragment = (PageControlFragment) tmpFragment;
+        }
+        else {
+            pageControlFragment = new PageControlFragment();
+            fm.beginTransaction()
+                    .add(R.id.page_control, pageControlFragment)
+                    .commit();
         }
 
-
-    @Override
-    public void onSaveInstanceState(Bundle outstate){
-        super.onSaveInstanceState(outstate);
-        outstate.putStringArrayList(getResources().getString(R.string.urls), urls);
-        outstate.putInt(getResources().getString(R.string.position), position);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState){
-        super.onRestoreInstanceState(savedInstanceState);
-        this.urls = savedInstanceState.getStringArrayList(getResources().getString(R.string.urls));
-        this.position = savedInstanceState.getInt(getResources().getString(R.string.position));
-        if (urls == null){
-            urls = new ArrayList<>();
-            position = -1;
-            
+        if ((tmpFragment = fm.findFragmentById(R.id.page_view)) instanceof PageViewerFragment){
+            pageViewerFragment = (PageViewerFragment) tmpFragment;
+        } else{
+            pageViewerFragment = new PageViewerFragment();
+            fm.beginTransaction()
+                    .add(R.id.page_display, pageViewerFragment)
+                    .commit();
         }
-
-
-        PageControlFragment pageControl = (PageControlFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.control));
-        //PagerFragment pagerFragment = (PagerFragment) getSupportFragmentManager().findFragmentByTag("page_display");
-        pageControl.updateMembers(urls,position);
-        PageViewerFragment pageView = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.viewer));
-
-        if (position >= 0) {
-            pageView.defineUrl(urls.get(position));
-        }
-
-
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pageControl)
-                .detach(pageView)
-                .attach(pageControl)
-                .attach(pageView)
-                .commit();
     }
 
-    @Override
-    public void searchPressed(int position, ArrayList <String> urls) {
-        this.urls = urls;
-        this.position = position;
 
-       // PageViewerFragment pvf = new PageViewerFragment();
-        PageViewerFragment pvf = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.viewer));
-        pvf.defineUrl(urls.get(position));
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pvf)
-                .attach(pvf)
-                .commit();
+    @Override
+    public void searchPressed(String url) {
+        pageViewerFragment.searchPressed(url);
 
     }
 
     @Override
-    public void backPressed(int position, ArrayList <String> urls) {
-        this.urls = urls;
-        this.position = position;
-        PageViewerFragment pvf = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.viewer));
-        pvf.defineUrl(urls.get(position));
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pvf)
-                .attach(pvf)
-                .commit();
-
+    public void backPressed() {
+        pageViewerFragment.backPressed();
     }
 
     @Override
-    public void forwardPressed(int position, ArrayList <String> urls) {
-        this.urls = urls;
-        this.position = position;
-        PageViewerFragment pvf = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.viewer));
-        pvf.defineUrl(urls.get(position));
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pvf)
-                .attach(pvf)
-                .commit();
+    public void forwardPressed() {
+        pageViewerFragment.forwardPressed();
     }
 
     @Override
     public void addLink(String link) {
-
-        //urls.add(correctURL(link));
-        urls.add(link);
-        position++;
-        PageControlFragment pvf = (PageControlFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.control));
-        pvf.updateMembers(urls, position);
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .detach(pvf)
-                .attach(pvf)
-                .commit();
+        pageControlFragment.updateMembers(link);
 
     }
 
@@ -163,8 +90,4 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         return correctURL;
     }
 
-    @Override
-    public void createNewTab() {
-
-    }
 }

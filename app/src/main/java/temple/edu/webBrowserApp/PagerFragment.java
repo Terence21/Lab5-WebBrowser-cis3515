@@ -31,7 +31,7 @@ public class PagerFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_page_control, container, false);
         pageAdapter = new PageAdapter(getChildFragmentManager());
-        pager = view.findViewById(R.id.);
+        //pager = view.findViewById(R.id.);
         pager.setAdapter(pageAdapter);
         return view;
     }
