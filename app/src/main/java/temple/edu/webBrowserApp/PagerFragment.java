@@ -36,29 +36,25 @@ public class PagerFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        notifyDataSetChange();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_pager, container, false);
         pageAdapter = new PageAdapter(getChildFragmentManager(), listener.getViewer());
+        setRetainInstance(true);
         pager = view.findViewById(R.id._viewPager);
         pager.setAdapter(pageAdapter);
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
         return view;
     }
@@ -75,9 +71,6 @@ public class PagerFragment extends Fragment {
         pageAdapter.notifyDataSetChanged();
     }
 
-    public void add(PageViewerFragment pageViewerFragment){
-        pageAdapter.addPageView(pageViewerFragment);
-    }
 
     @Override
     public void onAttach( Context context) {

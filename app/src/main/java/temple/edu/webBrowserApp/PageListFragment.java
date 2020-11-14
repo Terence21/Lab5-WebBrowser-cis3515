@@ -1,6 +1,10 @@
 package temple.edu.webBrowserApp;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +17,10 @@ import android.view.ViewGroup;
  */
 public class PageListFragment extends Fragment {
 
+
+    ListView listView;
+    private PageListAdapter adapter;
+    private changePageListener listener;
 
     public PageListFragment() {
         // Required empty public constructor
@@ -35,6 +43,34 @@ public class PageListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_page_list, container, false);
+        View view  = inflater.inflate(R.layout.fragment_page_list, container, false);
+        listView = view.findViewById(R.id._listView);
+        adapter = new PageListAdapter(getContext(), ((PagerFragment.ViewerListener) getActivity()).getViewer());
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listener.changePage(position);
+            }
+        });
+        return  view;
+    }
+
+    public void notifyDataSetChange(){
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAttach( Context context) {
+        super.onAttach(context);
+        try {
+            listener = (changePageListener) context;
+        }catch (ClassCastException e){
+            throw new ClassCastException(e.getLocalizedMessage());
+        }
+    }
+
+    public interface changePageListener{
+        public void changePage(int pageNum);
     }
 }

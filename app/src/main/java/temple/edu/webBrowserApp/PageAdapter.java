@@ -21,6 +21,8 @@ public class PageAdapter extends FragmentStatePagerAdapter {
 
     }
 
+
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -29,12 +31,13 @@ public class PageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return pageViewerFragments.size();
+        if (pageViewerFragments != null) {
+            return pageViewerFragments.size();
+        }else {
+            return 0;
+        }
     }
 
-    public void addPageView(PageViewerFragment pageViewerFragment){
-        pageViewerFragments.add(pageViewerFragment);
-    }
 
 
 

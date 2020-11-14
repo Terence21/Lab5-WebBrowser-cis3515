@@ -3,6 +3,8 @@ package temple.edu.webBrowserApp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,16 +14,33 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class PageViewerFragment extends Fragment {
+public class PageViewerFragment extends Fragment implements Parcelable {
 
     private WebView webView;
     private addLinkListener listener;
 
+    public Context context;
 
     public PageViewerFragment() {
         // Required empty public constructor
     }
 
+
+    protected PageViewerFragment(Parcel in) {
+        webView.restoreState(in.readBundle(getClass().getClassLoader()));
+    }
+
+    public static final Creator<PageViewerFragment> CREATOR = new Creator<PageViewerFragment>() {
+        @Override
+        public PageViewerFragment createFromParcel(Parcel in) {
+            return new PageViewerFragment(in);
+        }
+
+        @Override
+        public PageViewerFragment[] newArray(int size) {
+            return new PageViewerFragment[size];
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,10 +92,21 @@ public class PageViewerFragment extends Fragment {
         } catch (ClassCastException e){
             throw new ClassCastException(e.getLocalizedMessage());
         }
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context = null;
     }
 
     public void searchPressed(String url){
         webView.loadUrl(url);
+    }
+
+    public String getTitle(){
+        return webView.getTitle();
     }
 
     public void backPressed(){
@@ -85,6 +115,18 @@ public class PageViewerFragment extends Fragment {
 
     public void forwardPressed(){
         webView.goForward();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        webView.saveState(bundle);
+        dest.writeBundle(bundle);
     }
 
     public interface addLinkListener{
