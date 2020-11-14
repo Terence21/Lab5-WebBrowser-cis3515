@@ -1,22 +1,17 @@
 package temple.edu.webBrowserApp;
 
-import android.graphics.pdf.PdfDocument;
-import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
-public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener, PageViewerFragment.addLinkListener {
+public class BrowserActivity extends AppCompatActivity implements PageControlFragment.WebMenuListener, PageViewerFragment.addLinkListener, BrowserControlFragment.TabListener {
 
 
     ArrayList <String> urls;
+    ArrayList <PageViewerFragment> pageViewerFragments;
     int position;
 
         @Override
@@ -24,7 +19,8 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
-            this.setTitle(R.string.BrowserActivity);
+
+            // handle title
 
             if (savedInstanceState == null) {
                 if (urls == null) {
@@ -41,7 +37,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
                 fm.beginTransaction()
                         .add(R.id.page_control, pageControl, getResources().getString(R.string.control))
                         .addToBackStack(null)
-                        .add(R.id.page_viewer, pageView, getResources().getString(R.string.viewer))
+                        .add(R.id.page_display, pageView, getResources().getString(R.string.viewer))
                         .addToBackStack(null)
                         .commit();
             }
@@ -66,8 +62,9 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
             
         }
 
-       // PageControlFragment pageControl = PageControlFragment.newInstance(position, urls);
+
         PageControlFragment pageControl = (PageControlFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.control));
+        //PagerFragment pagerFragment = (PagerFragment) getSupportFragmentManager().findFragmentByTag("page_display");
         pageControl.updateMembers(urls,position);
         PageViewerFragment pageView = (PageViewerFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.viewer));
 
@@ -164,5 +161,10 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
             correctURL += ".com";
         }
         return correctURL;
+    }
+
+    @Override
+    public void createNewTab() {
+
     }
 }
